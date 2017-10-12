@@ -17,3 +17,4 @@ Create a dns to run in pageSpeed
 ngrok http 8080
 ```
 
+Minifier used - https://www.minifier.org/

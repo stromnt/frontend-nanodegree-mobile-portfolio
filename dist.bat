@@ -1,0 +1,2 @@
+echo on
+xcopy "C:\Users\Tania\Dropbox\Data\Udacity\Web Developer Course\frontend-nanodegree-mobile-portfolio\src\views\*.*" "C:\Users\Tania\Dropbox\Data\Udacity\Web Developer Course\frontend-nanodegree-mobile-portfolio\dist\views" /s
