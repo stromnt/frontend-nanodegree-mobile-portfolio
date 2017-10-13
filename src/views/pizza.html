@@ -31,10 +31,12 @@
       font-weight: 800;
     }
 
+    /*Optimisation - set backface to hidden to improve performance*/
     .mover {
       position: fixed;
       width: 100px;
       z-index: -1;
+      backface-visibility: hidden;
     }
 
     .randomPizzaContainer {

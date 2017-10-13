@@ -407,13 +407,14 @@ var resizePizzas = function(size) {
   function changeSliderLabel(size) {
     switch(size) {
       case "1":
-        document.querySelector("#pizzaSize").innerHTML = "Small";
+        // Optimization - replaced querySelector with faster getElementById
+        document.getElementById("pizzaSize").innerHTML = "Small";
         return;
       case "2":
-        document.querySelector("#pizzaSize").innerHTML = "Medium";
+        document.getElementById("pizzaSize").innerHTML = "Medium";
         return;
       case "3":
-        document.querySelector("#pizzaSize").innerHTML = "Large";
+        document.getElementById("pizzaSize").innerHTML = "Large";
         return;
       default:
         console.log("bug in changeSliderLabel");
@@ -438,8 +439,11 @@ var resizePizzas = function(size) {
         console.log("bug in sizeSwitcher");
     }
 
-    var pizzaItem = document.querySelectorAll(".randomPizzaContainer");
-    for (var i = 0; i < pizzaItem.length; i++) {
+    // Optimisation - replace document.querySelectorAll with faster getElementsByClassName
+    var pizzaItem = document.getElementsByClassName("randomPizzaContainer");
+    // Optimisation - define the pizzaItemLen outside the for loop so that it only calculates once
+    var pizzaItemLen = pizzaItem.length;
+    for (var i = 0; i < pizzaItemLen; i++) {
       pizzaItem[i].style.width = newWidth + "%";
     }
   }
@@ -456,8 +460,9 @@ var resizePizzas = function(size) {
 window.performance.mark("mark_start_generating"); // collect timing data
 
 // This for-loop actually creates and appends all of the pizzas when the page loads
+// Optimization - take the pizzasDiv selector search outside the for loop
+var pizzasDiv = document.getElementById("randomPizzas");
 for (var i = 2; i < 100; i++) {
-  var pizzasDiv = document.getElementById("randomPizzas");
   pizzasDiv.appendChild(pizzaElementGenerator(i));
 }
 
@@ -489,14 +494,16 @@ function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
-  var items = document.querySelectorAll('.mover');
+  // Optimisation - replace document.querySelectorAll with faster getElementsByClassName
+  var items = document.getElementsByClassName('mover');
   // document.body.scrollTop is no longer supported in Chrome.
   var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-  for (var i = 0; i < items.length; i++) {
-    var phase = Math.sin((scrollTop / 1250) + (i % 5));
 
-    var diff = (items[i].basicLeft + 100) * phase  + 'px';
-    items[i].style.transform = "translateX(" + diff + ")";
+  // Optimisation - define phase variable and the items array lenth used in the loop, inside initialization section rather than in the loop
+  for (var i = 0, len = items.length, phase; i < len; i++) {
+    phase = Math.sin((scrollTop / 1250) + (i % 5));
+    items[i].style.transform = "translateX(" + 100 * phase + "px)";
+
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -516,14 +523,20 @@ window.addEventListener('scroll', updatePositions);
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
-  var movingPizzas = document.querySelector("#movingPizzas1");
-  for (var i = 0; i < 64; i++) {
-    var elem = document.createElement('img');
+  // Optimization - replaced querySelector with faster getElementById
+  //                reduced the size of images/pizza.png to create a small jpg
+  var movingPizzas = document.getElementById("movingPizzas1");
+  // Optimization - dynamically calculate the no. of moving Pizza's to save on creating non visible ones
+  var noOfPizzas = window.screen.height / s * cols;
+  // Optimization - define the definition of elem in the initialisation of the for loop to prevent it from being created every loop
+  for (var i = 0, elem; i < noOfPizzas; i++) {
+    elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizzaBG.jpg";
     elem.style.height = "100px";
     elem.style.width = "73.333px";
-    elem.basicLeft = (i % cols) * s;
+    // Optimization - define the image left most position to enable the style.transform to work of the base position
+    elem.style.left = (i % cols) * s + 'px';
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
     movingPizzas.appendChild(elem);
   }
